@@ -9,10 +9,7 @@
   when:
     - ansible_facts.services['ufw'] is defined
     - ansible_facts.services['ufw'].state == 'running'
-  block:
-    - name: Print UFW Service Information
-      ansible.builtin.debug:
-        msg: "{{ ansible_facts.services['ufw'] }}"      
+  block:      
 
     - name: Get ufw status
       ansible.builtin.command:
@@ -44,7 +41,7 @@
   when:
     - ansible_facts.services['firewalld.service'] is defined
     - ansible_facts.services['firewalld.service'].state == 'running'
-  block:
+  block:  
     - name: If firewalld enabled, open api port
       ansible.posix.firewalld:
         port: "{{ api_port }}/tcp"
