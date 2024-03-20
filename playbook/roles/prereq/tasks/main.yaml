@@ -10,6 +10,10 @@
     - ansible_facts.services['ufw'] is defined
     - ansible_facts.services['ufw'].state == 'running'
   block:
+    - name: Print UFW Service Information
+      ansible.builtin.debug:
+        msg: "{{ ansible_facts.services['ufw'] }}"      
+
     - name: Get ufw status
       ansible.builtin.command:
         cmd: ufw status
@@ -22,7 +26,7 @@
 
     - name: If ufw enabled, open api port
       when:
-        - ufw_status.stdout == "Stato: attivo"
+        - ufw_status.stdout() == "Stato: attivo"
       community.general.ufw:
         rule: allow
         port: "{{ api_port }}"
