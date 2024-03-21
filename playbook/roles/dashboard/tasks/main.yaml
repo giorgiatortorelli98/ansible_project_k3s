@@ -1,1 +1,33 @@
+---
 
+- name: Deploy Kubernetes Dashboard UI
+  ansible.builtin.command: kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.7.0/aio/deploy/recommended.yaml
+
+- name: Creating a ServiceAccount
+  ansible.builtin.command: kubectl create serviceaccount -n kubernetes-dashboard admin-user
+
+- name: Creating a ClusterRoleBinding
+  ansible.builtin.command: kubectl create clusterrolebinding admin-user --clusterrole=cluster-admin --serviceaccount=kubernetes-dashboard:admin-user
+
+- name: Getting a Bearer Token for ServiceAccount
+  ansible.builtin.command: kubectl -n kubernetes-dashboard create token admin-user
+  register: token_result
+
+- name: Get Token
+  ansible.builtin.debug:
+      var: token_result.stdout
+
+- name: Assign NodePort Service 
+  ansible.builtin.command:
+    cmd: >
+      kubectl --namespace kubernetes-dashboard patch svc kubernetes-dashboard -p '{"spec": {"type": "NodePort"}}'
+
+- name: Get number of NodePort
+  ansible.builtin.command:
+    cmd: >
+      kubectl --namespace kubernetes-dashboard get svc kubernetes-dashboard -o=jsonpath="{.spec.ports[0].nodePort}"
+  register: port_output
+
+- name: Display the PortNumber
+  ansible.builtin.debug:
+    msg: "The NodePort number is {{ port_output.stdout }}"
