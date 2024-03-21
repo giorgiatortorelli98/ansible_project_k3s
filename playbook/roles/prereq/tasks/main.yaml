@@ -59,6 +59,3 @@
         immediate: true
       loop: "{{ (cluster_cidr + ',' + service_cidr) | split(',') }}"
 
-- name: Gather the package facts
-  ansible.builtin.package_facts:
-    manager: auto
