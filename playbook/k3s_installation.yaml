@@ -15,5 +15,3 @@
       when: k3s_version_output.rc != 0
     - role: k3s
       when: k3s_version_output.rc != 0
-    - role: dashboard
-      when: k3s_version_output.rc != 0 
